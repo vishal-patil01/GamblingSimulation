@@ -10,6 +10,7 @@ MAX_PERCENT=$((STAKE_PER_DAY+$((STAKE_PER_DAY * 50 /100)) ))
 
 #!Initializing Variables
 cash=$STAKE_PER_DAY
+declare -A betingRecords
 
 #!Function for Daily Betting
 function dailyBet() {
@@ -32,7 +33,11 @@ function monthlyGambling() {
 #!loop for 20 Days
 for ((i=1;i<=20;i++))
 do
-	totalAmount=$((totalAmount + $(dailyBet)))
+	#!storing Each Day amount in Dictionary
+	bettingRecords[Day$i]=$(dailyBet)
+	totalAmount=$((totalAmount + ${bettingRecords[Day$i]}))
+	echo "Day $i = ${bettingRecords[Day$i]}"
+
 done
 
 #!Checking for Win or loose
