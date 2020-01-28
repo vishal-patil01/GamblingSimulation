@@ -8,9 +8,9 @@ BET=1
 MIN_PERCENT=$((STAKE_PER_DAY-$((STAKE_PER_DAY * 50 /100)) ))
 MAX_PERCENT=$((STAKE_PER_DAY+$((STAKE_PER_DAY * 50 /100)) ))
 
-#!Initializing Variables
+#!Initializing Variables & Dictionary
 cash=$STAKE_PER_DAY
-declare -A betingRecords
+declare -A sumOfBets
 
 #!Function for Daily Betting
 function dailyBet() {
@@ -28,25 +28,27 @@ echo $gainCash
 }
 
 #!function for Monthly Bet
-
 function monthlyGambling() {
 #!loop for 20 Days
 for ((i=1;i<=20;i++))
 do
 	#!storing Each Day amount in Dictionary
-	bettingRecords[Day$i]=$(dailyBet)
-	totalAmount=$((totalAmount + ${bettingRecords[Day$i]}))
-	echo "Day $i = ${bettingRecords[Day$i]}"
+	sumOfBets[Day$i]=$((${sumOfBets[Day$((i-1))]} + $(dailyBet)))
+done  
 
-done
+#!finding Luckiest & Unluckiest Day by calling sortDictionary function and getting 1st result
+echo "Luckiest Day is $(sortDictionary | head -1 ) "
+echo "Unluckiest Day is $(sortDictionary | tail -1) "
+}
 
-#!Checking for Win or loose
-if [ $totalAmount -gt 0 ]
-then
-	echo "Total Amount Won in 20 Days $totalAmount"
-else
-	echo "Total Amount Loose in 20 Days $totalAmount"
-fi
+
+#!sort all key value pair of dictionary 
+function sortDictionary() {
+for day in ${!sumOfBets[@]}
+do
+	echo "$day : ${sumOfBets[$day]}"
+done | sort -k3 -rn 
+
 }
 
 #!Starting game
