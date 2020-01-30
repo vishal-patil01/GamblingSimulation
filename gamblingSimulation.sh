@@ -8,7 +8,7 @@ BET=1
 MIN_PERCENT=$((STAKE_PER_DAY-$((STAKE_PER_DAY * 50 /100)) ))
 MAX_PERCENT=$((STAKE_PER_DAY+$((STAKE_PER_DAY * 50 /100)) ))
 
-#!Initializing Variables & Dictionary
+#!Initializing Variables & Declaring Dictionary
 cash=$STAKE_PER_DAY
 declare -A sumOfBets
 
@@ -23,7 +23,10 @@ do
 		cash=$((cash-BET))
 	fi
 done
+#stored daily gain amount by subtracting Stack value
 gainCash=$((cash-STAKE_PER_DAY))
+
+#!return gainCash
 echo $gainCash
 }
 
@@ -36,13 +39,12 @@ do
 	sumOfBets[Day$i]=$((${sumOfBets[Day$((i-1))]} + $(dailyBet)))
 done  
 
-#!finding Luckiest & Unluckiest Day by calling sortDictionary function and getting 1st result
+#!finding Luckiest & Unluckiest Day by calling sortDictionary function and getting 1st(Top) result
 echo "Luckiest Day is $(sortDictionary | head -1 ) "
 echo "Unluckiest Day is $(sortDictionary | tail -1) "
 }
 
-
-#!sort all key value pair of dictionary 
+#!Descending Sort all key value pair of dictionary 
 function sortDictionary() {
 for day in ${!sumOfBets[@]}
 do
@@ -51,5 +53,18 @@ done | sort -k3 -rn
 
 }
 
-#!Starting game
+function playNextMonth() {
+#! calling Monthly Gambling to start game
 monthlyGambling
+
+#!checking Previous month balance of Gambler and Decides He/She will be playing or not
+while [ ${sumOfBets[Day20]} -gt 0 ]
+do
+	echo -e "\e[1;34m Last Month Balance = ${sumOfBets[Day20]} \e[0m \nPlaying Next Month\n"
+	monthlyGambling
+done
+	echo -e "\e[1;35m Last Month Balance = ${sumOfBets[Day20]} \e[0m \nNot Playing Next Month"
+}
+
+#!Starting Game
+playNextMonth
